@@ -1,0 +1,392 @@
+
+
+-- -----------------------------------------------------
+-- Table departamento
+-- -----------------------------------------------------
+CREATE TABLE  departamento (
+  id_departamento NUMBER NOT NULL,
+  departamento VARCHAR2(45) NULL,
+  PRIMARY KEY (id_departamento)
+);
+
+
+-- -----------------------------------------------------
+-- Table municipio
+-- -----------------------------------------------------
+CREATE TABLE  municipio (
+  id_municipio NUMBER NOT NULL,
+  municipio VARCHAR2(45) NULL,
+  departamento_id_departamento NUMBER NOT NULL,
+  PRIMARY KEY (id_municipio),
+  CONSTRAINT fk_municipio_departamento
+    FOREIGN KEY (departamento_id_departamento)
+    REFERENCES departamento (id_departamento)
+);
+
+
+-- -----------------------------------------------------
+-- Table direccion
+-- -----------------------------------------------------
+CREATE TABLE  direccion (
+  id_direccion NUMBER NOT NULL,
+  calle VARCHAR2(45) NULL,
+  avenida VARCHAR2(45) NULL,
+  otros VARCHAR2(45) NULL,
+  municipio_id_municipio NUMBER NOT NULL,
+  PRIMARY KEY (id_direccion),
+  CONSTRAINT fk_direccion_municipio
+    FOREIGN KEY (municipio_id_municipio)
+    REFERENCES municipio (id_municipio)
+);
+
+
+-- -----------------------------------------------------
+-- Table sede
+-- -----------------------------------------------------
+CREATE TABLE  sede (
+  id_sede NUMBER NOT NULL,
+  sede VARCHAR2(45) NULL,
+  direccion_id_direccion NUMBER NOT NULL,
+  PRIMARY KEY (id_sede),
+  CONSTRAINT fk_sede_direccion
+    FOREIGN KEY (direccion_id_direccion)
+    REFERENCES direccion (id_direccion)
+);
+
+
+-- -----------------------------------------------------
+-- Table clinica
+-- -----------------------------------------------------
+CREATE TABLE  clinica (
+  id_clinica NUMBER NOT NULL,
+  clinica VARCHAR2(45) NULL,
+  sede_id_sede NUMBER NOT NULL,
+  PRIMARY KEY (id_clinica),
+  CONSTRAINT fk_clinica_sede
+    FOREIGN KEY (sede_id_sede)
+    REFERENCES sede (id_sede)
+);
+
+
+-- -----------------------------------------------------
+-- Table especialidad
+-- -----------------------------------------------------
+CREATE TABLE  especialidad (
+  id_especialidad NUMBER NOT NULL,
+  especialidad VARCHAR2(45) NULL,
+  PRIMARY KEY (id_especialidad));
+
+
+-- -----------------------------------------------------
+-- Table clinica_especialidad
+-- -----------------------------------------------------
+CREATE TABLE  clinica_especialidad (
+  id_clinica_especialidad NUMBER NOT NULL,
+  clinica_id_clinica NUMBER NOT NULL,
+  especialidad_id_especialidad NUMBER NOT NULL,
+  PRIMARY KEY (id_clinica_especialidad),
+  CONSTRAINT fk_clinicaEspecialidad_clinica
+    FOREIGN KEY (clinica_id_clinica)
+    REFERENCES clinica (id_clinica),
+  CONSTRAINT fk_clinicaEspecialidad_especialidad1
+    FOREIGN KEY (especialidad_id_especialidad)
+    REFERENCES especialidad (id_especialidad)
+);
+
+
+-- -----------------------------------------------------
+-- Table terapia
+-- -----------------------------------------------------
+CREATE TABLE  terapia (
+  id_terapia NUMBER NOT NULL,
+  precio FLOAT NULL,
+  terapia VARCHAR2(45) NULL,
+  descripcion VARCHAR2(45) NULL,
+  especialidad_id_especialidad NUMBER NOT NULL,
+  PRIMARY KEY (id_terapia),
+  CONSTRAINT fk_terapia_especialidad
+    FOREIGN KEY (especialidad_id_especialidad)
+    REFERENCES especialidad (id_especialidad)
+);
+
+
+-- -----------------------------------------------------
+-- Table tipo_identidad
+-- -----------------------------------------------------
+CREATE TABLE  tipo_identidad (
+  id_tipo_identidad NUMBER NOT NULL,
+  tipo_identidad VARCHAR2(45) NULL,
+  PRIMARY KEY (id_tipo_identidad)
+);
+
+
+-- -----------------------------------------------------
+-- Table persona
+-- -----------------------------------------------------
+CREATE TABLE  persona (
+  id_persona NUMBER NOT NULL,
+  nombre VARCHAR2(45) NULL,
+  apellido VARCHAR2(45) NULL,
+  edad NUMBER NULL,
+  telefono NUMBER NULL,
+  email VARCHAR2(45) NULL,
+  identidad VARCHAR2(20) NULL,
+  nit VARCHAR2(13) NULL,
+  tipo_identidad_id_tipo_identidad NUMBER NOT NULL,
+  direccion_id_direccion NUMBER NOT NULL,
+  PRIMARY KEY (id_persona),
+  CONSTRAINT fk_persona_tipoIdentidad
+    FOREIGN KEY (tipo_identidad_id_tipo_identidad)
+    REFERENCES tipo_identidad (id_tipo_identidad),
+  CONSTRAINT fk_persona_direccion1
+    FOREIGN KEY (direccion_id_direccion)
+    REFERENCES direccion (id_direccion)
+);
+
+
+-- -----------------------------------------------------
+-- Table estado
+-- -----------------------------------------------------
+CREATE TABLE  estado (
+  id_estado NUMBER NOT NULL,
+  nombre_estado VARCHAR2(45) NULL,
+  PRIMARY KEY (id_estado)
+);
+
+
+-- -----------------------------------------------------
+-- Table especialista
+-- -----------------------------------------------------
+CREATE TABLE  especialista (
+  id_especialista NUMBER NOT NULL,
+  persona_id_persona NUMBER NOT NULL,
+  estado_id_estado NUMBER NOT NULL,
+  PRIMARY KEY (id_especialista),
+  CONSTRAINT fk_especialista_persona
+    FOREIGN KEY (persona_id_persona)
+    REFERENCES persona (id_persona),
+  CONSTRAINT fk_especialista_estado1
+    FOREIGN KEY (estado_id_estado)
+    REFERENCES estado (id_estado)
+);
+
+
+-- -----------------------------------------------------
+-- Table especialidad_especialista
+-- -----------------------------------------------------
+CREATE TABLE  especialidad_especialista (
+  id_especialidad_especialista NUMBER NOT NULL,
+  especialidad_id_especialidad NUMBER NOT NULL,
+  especialista_id_especialista NUMBER NOT NULL,
+  PRIMARY KEY (id_especialidad_especialista),
+  CONSTRAINT fk_especialidadEspecialista_especialidad
+    FOREIGN KEY (especialidad_id_especialidad)
+    REFERENCES especialidad (id_especialidad),
+  CONSTRAINT fk_especialidadEspecialista_especialista
+    FOREIGN KEY (especialista_id_especialista)
+    REFERENCES especialista (id_especialista)
+);
+
+
+-- -----------------------------------------------------
+-- Table tipo_pago
+-- -----------------------------------------------------
+CREATE TABLE  tipo_pago (
+  id_tipo_pago NUMBER NOT NULL,
+  tipo_pago VARCHAR2(45) NULL,
+  PRIMARY KEY (id_tipo_pago)
+);
+
+
+-- -----------------------------------------------------
+-- Table factura_tipo_pago
+-- -----------------------------------------------------
+CREATE TABLE  factura_tipo_pago (
+  id_factura_tipo_pago NUMBER NOT NULL,
+  cantidad VARCHAR2(45) NULL,
+  tipo_pago_id_tipoPago NUMBER NOT NULL,
+  fecha DATE NULL,
+  PRIMARY KEY (id_factura_tipo_pago),
+  CONSTRAINT fk_facturaTipoPago_tipoPago
+    FOREIGN KEY (tipo_pago_id_tipoPago)
+    REFERENCES tipo_pago (id_tipo_pago)
+);
+
+
+-- -----------------------------------------------------
+-- Table factura
+-- -----------------------------------------------------
+CREATE TABLE  factura (
+  id_factura NUMBER NOT NULL,
+  numero_factura NUMBER NULL,
+  serie_factura VARCHAR2(15) NULL,
+  factura_tipo_pago_id_factura_tipo_pago NUMBER NOT NULL,
+  estado_id_estado NUMBER NOT NULL,
+  PRIMARY KEY (id_factura),
+  CONSTRAINT fk_factura_facturaTipoPago
+    FOREIGN KEY (factura_tipo_pago_id_factura_tipo_pago)
+    REFERENCES factura_tipo_pago (id_factura_tipo_pago),
+  CONSTRAINT fk_factura_estado1
+    FOREIGN KEY (estado_id_estado)
+    REFERENCES estado (id_estado)
+);
+
+
+-- -----------------------------------------------------
+-- Table horario
+-- -----------------------------------------------------
+CREATE TABLE  horario (
+  id_horario NUMBER NOT NULL,
+  horario DATE NULL,
+  PRIMARY KEY (id_horario)
+);
+
+
+-- -----------------------------------------------------
+-- Table cliente
+-- -----------------------------------------------------
+CREATE TABLE  cliente (
+  id_cliente NUMBER NOT NULL,
+  antiguedad_meses VARCHAR2(45) NULL,
+  persona_id_persona NUMBER NOT NULL,
+  PRIMARY KEY (id_cliente),
+  CONSTRAINT fk_cliente_persona
+    FOREIGN KEY (persona_id_persona)
+    REFERENCES persona (id_persona)
+);
+
+
+-- -----------------------------------------------------
+-- Table reservacion
+-- -----------------------------------------------------
+CREATE TABLE  reservacion (
+  id_reservacion NUMBER NOT NULL,
+  datos_reservacion VARCHAR2(45) NULL,
+  fecha_reservacion DATE NULL,
+  horario_id_horario NUMBER NOT NULL,
+  cliente_id_cliente NUMBER NOT NULL,
+  estado_id_estado NUMBER NOT NULL,
+  especialidad_especialista_id_especialidad_especialista NUMBER NOT NULL,
+  clinica_especialidad_id_clinica_especialidad NUMBER NOT NULL,
+  PRIMARY KEY (id_reservacion),
+  CONSTRAINT fk_reservacion_horario
+    FOREIGN KEY (horario_id_horario)
+    REFERENCES horario (id_horario),
+  CONSTRAINT fk_reservacion_cliente
+    FOREIGN KEY (cliente_id_cliente)
+    REFERENCES cliente (id_cliente),
+  CONSTRAINT fk_reservacion_estado
+    FOREIGN KEY (estado_id_estado)
+    REFERENCES estado (id_estado),
+  CONSTRAINT fk_reservacion_especialidadEspecialista
+    FOREIGN KEY (especialidad_especialista_id_especialidad_especialista)
+    REFERENCES especialidad_especialista (id_especialidad_especialista),
+  CONSTRAINT fk_reservacion_clinicaEspecialidad
+    FOREIGN KEY (clinica_especialidad_id_clinica_especialidad)
+    REFERENCES clinica_especialidad (id_clinica_especialidad)
+);
+
+
+-- -----------------------------------------------------
+-- Table terapia_reservacion
+-- -----------------------------------------------------
+CREATE TABLE  terapia_reservacion (
+  id_terapia_reservacion NUMBER NOT NULL,
+  terapia_id_terapia NUMBER NOT NULL,
+  reservacion_id_reservacion NUMBER NOT NULL,
+  PRIMARY KEY (id_terapia_reservacion),
+  CONSTRAINT fk_terapiaReservacion_terapia
+    FOREIGN KEY (terapia_id_terapia)
+    REFERENCES terapia (id_terapia),
+  CONSTRAINT fk_terapiaReservacion_reservacion
+    FOREIGN KEY (reservacion_id_reservacion)
+    REFERENCES reservacion (id_reservacion)
+);
+
+
+-- -----------------------------------------------------
+-- Table detalle_factura
+-- -----------------------------------------------------
+CREATE TABLE  detalle_factura (
+  id_detalle_factura NUMBER NOT NULL,
+  factura_id_factura NUMBER NOT NULL,
+  terapia_reservacion_id_terapia_reservacion NUMBER NOT NULL,
+  PRIMARY KEY (id_detalle_factura),
+  CONSTRAINT fk_detalleFactura_factura
+    FOREIGN KEY (factura_id_factura)
+    REFERENCES factura (id_factura),
+  CONSTRAINT fk_detalleFactura_terapiaReservacion
+    FOREIGN KEY (terapia_reservacion_id_terapia_reservacion)
+    REFERENCES terapia_reservacion (id_terapia_reservacion)
+);
+
+
+-- -----------------------------------------------------
+-- Table usuario
+-- -----------------------------------------------------
+CREATE TABLE  usuario (
+  id_usuario NUMBER NOT NULL,
+  usuario varchar2(20) NOT NULL,
+  password VARCHAR2(45) NULL,
+  persona_id_persona NUMBER NOT NULL,
+  PRIMARY KEY (id_usuario),
+  CONSTRAINT fk_usuario_persona
+    FOREIGN KEY (persona_id_persona)
+    REFERENCES persona (id_persona)
+);
+
+
+-- -----------------------------------------------------
+-- Table rol
+-- -----------------------------------------------------
+CREATE TABLE  rol (
+  id_rol NUMBER NOT NULL,
+  nombre_rol VARCHAR2(45) NULL,
+  PRIMARY KEY (id_rol)
+);
+
+
+-- -----------------------------------------------------
+-- Table historial
+-- -----------------------------------------------------
+CREATE TABLE  historial (
+  id_historial NUMBER NOT NULL,
+  fecha_cambio DATE NULL,
+  usuario_id_usuario NUMBER NOT NULL,
+  estado_id_estado NUMBER NOT NULL,
+  rol_id_rol NUMBER NOT NULL,
+  PRIMARY KEY (id_historial),
+  CONSTRAINT fk_historial_usuario
+    FOREIGN KEY (usuario_id_usuario)
+    REFERENCES usuario (id_usuario),
+  CONSTRAINT fk_historial_estado
+    FOREIGN KEY (estado_id_estado)
+    REFERENCES estado (id_estado),
+  CONSTRAINT fk_historial_rol1
+    FOREIGN KEY (rol_id_rol)
+    REFERENCES rol (id_rol)
+);
+
+
+-- -----------------------------------------------------
+-- Table mydb.menu
+-- -----------------------------------------------------
+CREATE TABLE menu (
+  id_menu INT NOT NULL,
+  nombre_menu VARCHAR2(45) NULL,
+  PRIMARY KEY (id_menu));
+
+-- -----------------------------------------------------
+-- Table mydb.menu_rol
+-- -----------------------------------------------------
+CREATE TABLE  menu_rol (
+  id_menu_rol INT NOT NULL,
+  menu_id_menu INT NOT NULL,
+  rol_id_rol INT NOT NULL,
+  PRIMARY KEY (id_menu_rol),
+  CONSTRAINT fk_menu_rol_menu1
+    FOREIGN KEY (menu_id_menu)
+    REFERENCES menu (id_menu),
+  CONSTRAINT fk_menu_rol_rol1
+    FOREIGN KEY (rol_id_rol)
+    REFERENCES rol (id_rol);
