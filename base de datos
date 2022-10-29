@@ -901,7 +901,6 @@ BEGIN
     insertar_menu_rol(16, 7, 2);
     insertar_menu_rol(17, 9, 2);
     insertar_menu_rol(18, 10, 2);
-    insertar_menu_rol(18, 11, 2);
 END;
 /
 
